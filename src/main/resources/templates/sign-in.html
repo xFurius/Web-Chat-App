@@ -6,6 +6,9 @@
     <title>SIGNIN</title>
 </head>
 <body>
+    <div th:if="${param.error}">
+        <p>INVALID CRIDENTIALS</p>
+    </div>
     <form th:action="@{/test/auth}" method="post" th:object="${request}">
         <input type="text" th:field="*{email}" placeholder="Email">
         <input type="password" th:field="*{password}" placeholder="Password">

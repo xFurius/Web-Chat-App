@@ -16,12 +16,11 @@ public class JwtTokenUtil {
     @Value("${jwt.token.secret}")
     private String tokenSecret;
 
-    public String generateToken(String email){ //add claims later
+    public String generateToken(String email){
         String token = JWT.create()
-        .withSubject("User Details")
         .withClaim("email", email)
         .withIssuedAt(new Date())
-        .withIssuer("IssuerHere")
+        .withIssuer("webChatApp")
         .sign(Algorithm.HMAC256(tokenSecret));
 
         return token;
@@ -29,8 +28,7 @@ public class JwtTokenUtil {
 
     public String validateToken(String token) throws JWTVerificationException{
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecret))
-        .withSubject("User Details")
-        .withIssuer("IssuerHere")
+        .withIssuer("webChatApp")
         .build();
 
         DecodedJWT decodedToken = verifier.verify(token);

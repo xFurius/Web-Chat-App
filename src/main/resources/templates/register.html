@@ -6,12 +6,31 @@
     <title>Register</title>
 </head>
 <body>
+    <div th:if="${param.error}">
+        <p>USER ALREADY EXISTS</p>
+    </div>
     <form th:action="@{/test/register}" method="post" th:object="${user}">
-        <input type="text" th:field="*{firstName}" placeholder="First Name">
-        <input type="text" th:field="*{lastName}" placeholder="Last Name">
-        <input type="text" th:field="*{email}" placeholder="Email">
-        <input type="password" th:field="*{password}" placeholder="Password">
-        <input type="submit" value="REGISTER">
+        <table>
+        <tr>
+            <td><input type="text" th:field="*{firstName}" placeholder="First Name"></td>
+            <td th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></td>
+        </tr>
+        <tr>
+            <td><input type="text" th:field="*{lastName}" placeholder="Last Name"></td>
+            <td th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></td>
+        </tr>
+        <tr>
+            <td><input type="text" th:field="*{email}" placeholder="Email"></td>
+            <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></td>
+        </tr>
+        <tr>
+            <td><input type="password" th:field="*{password}" placeholder="Password"></td>
+            <td th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="REGISTER"></td>
+        </tr>
+    </table>
     </form>
 </body>
 </html>
