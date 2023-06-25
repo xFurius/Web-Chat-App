@@ -17,6 +17,7 @@ import com.example.webChatApp.user.User;
 import com.example.webChatApp.user.UserRepository;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
@@ -43,10 +44,20 @@ public class SecurityController {
             String token = jwtTokenUtil.generateToken(authRequest.getEmail());
             Cookie cookie = new Cookie("TOKEN",token);
             cookie.setPath("/");
+            cookie.setMaxAge(-1);
             response.addCookie(cookie);
             return "redirect:/app/test";
         }catch(NoSuchElementException | AuthenticationException e){
             return "redirect:/test/signIn?error";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(Model model, HttpServletResponse response){
+        Cookie cookie = new Cookie("TOKEN",null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/test/home";
     }
 }

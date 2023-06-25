@@ -3,6 +3,7 @@ package com.example.webChatApp.user;
 import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-// @Controller
+@Controller
 @RequestMapping("/app")
-@RestController
+// @RestController
 public class UserController {
     private UserRepository repository;
 
@@ -29,13 +30,5 @@ public class UserController {
         User user = new User("Jon", "snow", "test", "johnsnow@gmail.com");
         repository.save(user);
         return "test";
-    }
-
-
-    @GetMapping("/authEndpoint")
-    public User getUser(){
-        String email = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(email);
-        return repository.findByEmail(email).get();
     }
 }
