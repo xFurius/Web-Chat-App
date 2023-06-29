@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+        <script type="text/javascript" th:src="@{/js/stomp.js}"></script>
+        <script>
+            var stompC = null;
+            var jsuid = null;
+            
+            function connect() {
+                jsuid = document.getElementById('uid').innerHTML;
+                console.log(jsuid);
+
+                var socket = new WebSocket("ws://localhost:8080/websocket");
+                stompC = Stomp.over(socket);
+                stompC.connect({}, function(frame){
+                    document.getElementById('connection').innerHTML = frame;
+                    console.log("connected: "+frame);
+                    stompC.subscribe('/chat/'+jsuid, function(message){
+                        console.log(message.body);
+                    })
+                })
+            }
+
+            function sendMessage(){
+                var to = document.getElementById('receiver').value;
+                var m = document.getElementById('mess').value;
+                console.log(to + ":"+m);
+                stompC.send("/app/process-message", {}, JSON.stringify({'to':to, 'content':m}));
+            }
+        </script>
+<body>
+    <p id="connection"></p>
+    <button onclick="connect()">Connect</button>
+    <p id="uid" th:text="${UID}"></p>
+    <div id="conversationDiv">
+        <input type="text" id="mess" placeholder="Write a message..."/>
+        <input type="text" id="receiver" placeholder="receiver"/>
+        <button id="sendMessage" onclick="sendMessage()">Send</button>
+    </div>
+</body>
+</html>
