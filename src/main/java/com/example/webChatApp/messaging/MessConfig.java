@@ -12,6 +12,7 @@ public class MessConfig implements WebSocketMessageBrokerConfigurer{
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/chat");
+        config.enableSimpleBroker("/sys");
         config.setApplicationDestinationPrefixes("/app");
     }
 

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/app")
+@RequestMapping("/m")
 // @RestController
 public class UserController {
     private UserRepository repository;

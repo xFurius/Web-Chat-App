@@ -46,7 +46,7 @@ public class Config {
         .authorizeHttpRequests(config -> config.requestMatchers("/test/**").permitAll()
         .requestMatchers("/js/**").permitAll()
         .requestMatchers("/chat", "/app", "/websocket", "/process", "/chat/**", "/app/**").permitAll()
-        .requestMatchers("/app/**").authenticated())
+        .requestMatchers("/m/**").authenticated())
         .userDetailsService(userDetailsService)
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .formLogin(login -> login.loginPage("/test/signIn").permitAll());

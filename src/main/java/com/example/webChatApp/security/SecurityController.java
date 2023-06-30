@@ -45,7 +45,7 @@ public class SecurityController {
             cookie.setPath("/");
             cookie.setMaxAge(-1);
             response.addCookie(cookie);
-            return "redirect:/app/test";
+            return "redirect:/m/test";
         }catch(NoSuchElementException | AuthenticationException e){
             return "redirect:/test/signIn?error";
         }

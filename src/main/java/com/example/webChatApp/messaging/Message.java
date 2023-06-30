@@ -11,7 +11,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SysMessage {
-    String to;
-    String content;
+public class Message {
+    private String to;
+    private String content;
+    private String from;
 }
