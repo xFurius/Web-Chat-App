@@ -25,50 +25,55 @@
                         let v = JSON.parse(users.body);
                         document.getElementById('online-users').innerHTML="";
                         v.forEach(user => {
-                            var p = document.createElement('p');
-                            p.innerHTML = user;
-    
-                            document.getElementById('online-users').appendChild(p);
+                            var btn = document.createElement('button');
+                            btn.innerHTML = user;
+                            btn.id = user;
+                            btn.onclick = openMessages;
+                            
+                            document.getElementById('online-users').appendChild(btn);
                         })
+                    });
+
+                    stompC.subscribe('/chat/'+jsuid, function(message){
+                        var m = JSON.parse(message.body);
+                        showMessage(m);
                     });
 
                     stompC.send("/app/init-users", {}, JSON.stringify({'to':"", 'content':jsuid, 'from':""}));
 
 
-                    stompC.subscribe('/chat/'+jsuid, function(message){
-                        var m = JSON.parse(message.body);
-                        console.log(m.content);
-                        showMessage(m);
-                    })
                 })
             }
 
+            function openMessages(){
+                stompC.disconnect();
+                window.location.replace("/messages/"+this.id)
+            }
+
             function send(){
-                var to = document.getElementById('receiver').value;
                 var m = document.getElementById('mess').value;
-                console.log(to + ':'+m);
-                stompC.send('/app/process-message', {}, JSON.stringify({'to':to, 'content':m}));
+                console.log(window.location.pathname.split("/")[2] + ':' + m);
+                stompC.send('/app/process-message', {}, JSON.stringify({'to':window.location.pathname.split("/")[3], 'content':m, 'from':jsuid}));
             }
 
             function showMessage(message){
                 var p = document.createElement('p');
-                p.innerHTML = message.content;
-                p.className = 'right';
+                p.innerHTML = 'new message from: '+message.from+" : "+message.content;
 
                 document.getElementById('messagesDiv').appendChild(p);
             }
 
-            function showSysMessage(message){
-                var p = document.createElement('p');
-                p.innerHTML = message.from;
+            // function showSysMessage(message){
+            //     var p = document.createElement('p');
+            //     p.innerHTML = message.from;
 
-                document.getElementById('friend-req').appendChild(p);
-            }
+            //     document.getElementById('friend-req').appendChild(p);
+            // }
 
-            function sendMessage(to, content, dest){
-                stompC.send(dest, {}, JSON.stringify({'to':to, 'content':content, 'from':jsuid}));
+            // function sendMessage(to, content, dest){
+            //     stompC.send(dest, {}, JSON.stringify({'to':to, 'content':content, 'from':jsuid}));
                 
-            }
+            // }
 
             function dctest(){
                 stompC.send('/app/update-users', {}, JSON.stringify({'to':'', 'content':'dc', 'from':jsuid}))
@@ -95,24 +100,25 @@
 				// })
             // }
         </script>
-<body>
+<body onload="connect()">
     <p id="connection"></p>
     <button onclick="connect()">Connect</button>
     <button onclick="dctest()">DC TEST</button>
     <p id="uid" th:text="${UID}"></p>
     <div id="online-users"></div>
-    <!-- <div id="usersDiv">
+    <div th:if="${person != null}">
+        <p th:text="${person}"></p>
         <input type="text" id="mess" placeholder="Write a message..."/>
+        <button id="send" onclick="send()">Send</button>
+    </div>
+    <div id="messagesDiv"></div>
+    <!-- <div id="usersDiv">
         <input type="text" id="receiver" placeholder="receiver"/>
-        <button id="send" onclick="sendMessage()">Send</button>
     </div> -->
     <!-- <div id="friendsDiv"> -->
         <!-- <input type="text" id="user" placeholder="Enter friend's uid"/> -->
         <!-- <button onclick="addToFriends()">Send</button> -->
     <!-- </div> -->
-    <!-- <div id="messagesDiv"> -->
-    <!-- </div> -->
-    <!-- <div th:insert="~{conversation(uid = ${UID})}"></div> -->
     <!-- <div id="friend-req">
         <p>Friend requests: </p>
         <p th:text="${uid}"></p>

@@ -21,14 +21,17 @@ public class MessController {
     @MessageMapping("/process-message")
     public Message processMessage(@Payload Message message) throws Exception{
         System.out.println("in process: "+message.toString());
-        // simpMessagingTemplate.convertAndSend("/chat/"+message.getTo(), message);
+        System.out.println(message.getTo());
+        simpMessagingTemplate.convertAndSend("/chat/"+message.getTo(), message);
         return message;
     }
 
     @MessageMapping("/init-users")
     public Message initUsers(@Payload Message message) throws Exception{
         System.out.println("in /init-users: "+message.toString());
-        onlineUsers.add(message.getContent());
+        if(!onlineUsers.contains(message.getContent())){
+            onlineUsers.add(message.getContent());
+        }
         simpMessagingTemplate.convertAndSend("/sys/user-list", onlineUsers.toArray());
         return message;
     }

@@ -24,7 +24,7 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int UID;
+    private String UID;
 
     @NotEmpty 
     private String firstName;

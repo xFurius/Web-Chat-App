@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.webChatApp.user.User;
 import com.example.webChatApp.user.UserRepository;
@@ -22,7 +21,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/test")
 public class SecurityController {
     private AuthenticationManager authenticationManager;    
     private JwtTokenUtil jwtTokenUtil;
@@ -47,16 +45,7 @@ public class SecurityController {
             response.addCookie(cookie);
             return "redirect:/m/test";
         }catch(NoSuchElementException | AuthenticationException e){
-            return "redirect:/test/signIn?error";
+            return "redirect:/signIn?error";
         }
-    }
-
-    @GetMapping("/logout")
-    public String logout(Model model, HttpServletResponse response){
-        Cookie cookie = new Cookie("TOKEN",null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
-        return "redirect:/test/home";
     }
 }

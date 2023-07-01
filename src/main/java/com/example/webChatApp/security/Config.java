@@ -43,13 +43,16 @@ public class Config {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(crsf -> crsf.disable())
         .httpBasic(basic -> basic.disable())
-        .authorizeHttpRequests(config -> config.requestMatchers("/test/**").permitAll()
+        .authorizeHttpRequests(config -> config
+        .requestMatchers("/register", "/home", "/auth", "/logout").permitAll()
         .requestMatchers("/js/**").permitAll()
-        .requestMatchers("/chat", "/app", "/websocket", "/process", "/chat/**", "/app/**").permitAll()
+        .requestMatchers("/chat", "/app", "/websocket", "/chat/**", "/app/**").permitAll()
+        .requestMatchers("/messages","/messages/**").authenticated()
         .requestMatchers("/m/**").authenticated())
         .userDetailsService(userDetailsService)
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .formLogin(login -> login.loginPage("/test/signIn").permitAll());
+        .formLogin(login -> login.loginPage("/signIn").permitAll())
+        .logout(logout -> logout.clearAuthentication(true).deleteCookies("TOKEN").invalidateHttpSession(true).logoutSuccessUrl("/home"));
         
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

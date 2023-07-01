@@ -9,7 +9,7 @@
     <div th:if="${param.error}">
         <p>USER ALREADY EXISTS</p>
     </div>
-    <form th:action="@{/test/register}" method="post" th:object="${user}">
+    <form th:action="@{/register}" method="post" th:object="${user}">
         <table>
         <tr>
             <td><input type="text" th:field="*{firstName}" placeholder="First Name"></td>

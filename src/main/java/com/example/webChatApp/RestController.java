@@ -20,9 +20,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-// @org.springframework.web.bind.annotation.RestController
 @Controller
-@RequestMapping("/test")
 public class RestController {
     private UserRepository repository;
     private BCryptPasswordEncoder bcrypt;
@@ -45,14 +43,14 @@ public class RestController {
         }else{
             try{
                 User temp = repository.findByEmail(user.getEmail()).get();
-                return "redirect:/test/register?error";
+                return "redirect:/register?error";
             }catch(NoSuchElementException e){
-                user.setUID(new Random(System. currentTimeMillis()). nextInt(99999999));
+                user.setUID(""+new Random(System. currentTimeMillis()). nextInt(99999999));
                 String encodedPass = bcrypt.encode(user.getPassword());
                 user.setPassword(encodedPass);
                 repository.save(user);
                 System.out.println(user.toString());
-                return "redirect:/test/home";
+                return "redirect:/home";
             }
         }
     }

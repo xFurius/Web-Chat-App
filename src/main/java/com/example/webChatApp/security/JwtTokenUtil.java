@@ -49,13 +49,13 @@ public class JwtTokenUtil {
         return decodedToken.getClaim("email").asString();
     }
 
-    public int extractUID(String token){
+    public String extractUID(String token){
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecret))
         .withIssuer("webChatApp")
         .build();
 
         DecodedJWT decodedToken = verifier.verify(token);
-        return decodedToken.getClaim("UID").asInt();
+        return decodedToken.getClaim("UID").asString();
     }
 
     public String getToken(HttpServletRequest request){
