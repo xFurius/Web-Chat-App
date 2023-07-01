@@ -53,7 +53,7 @@
             function send(){
                 var m = document.getElementById('mess').value;
                 console.log(window.location.pathname.split("/")[2] + ':' + m);
-                stompC.send('/app/process-message', {}, JSON.stringify({'to':window.location.pathname.split("/")[3], 'content':m, 'from':jsuid}));
+                stompC.send('/app/process-message', {}, JSON.stringify({'to':window.location.pathname.split("/")[2], 'content':m, 'from':jsuid}));
             }
 
             function showMessage(message){
