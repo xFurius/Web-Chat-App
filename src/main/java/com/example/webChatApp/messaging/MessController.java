@@ -12,17 +12,20 @@ import org.springframework.stereotype.Controller;
 public class MessController {
     private SimpMessagingTemplate simpMessagingTemplate;
     private List<String> onlineUsers;
+    private MessageRepository messageRepository;
 
-    public MessController(SimpMessagingTemplate simpMessagingTemplate){
+    public MessController(SimpMessagingTemplate simpMessagingTemplate, MessageRepository messageRepository){
         this.simpMessagingTemplate = simpMessagingTemplate;
-        onlineUsers = new LinkedList<String>(); //change this to include uid and first and last name
+        this.messageRepository = messageRepository;
+        onlineUsers = new LinkedList<String>();
     }
 
     @MessageMapping("/process-message")
     public Message processMessage(@Payload Message message) throws Exception{
         System.out.println("in process: "+message.toString());
-        System.out.println(message.getTo());
-        simpMessagingTemplate.convertAndSend("/chat/"+message.getTo(), message);
+        System.out.println(message.getReceiver());
+        messageRepository.save(message);
+        simpMessagingTemplate.convertAndSend("/chat/"+message.getReceiver(), message);
         return message;
     }
 
@@ -30,7 +33,7 @@ public class MessController {
     public Message initUsers(@Payload Message message) throws Exception{
         System.out.println("in /init-users: "+message.toString());
         if(!onlineUsers.contains(message.getContent())){
-            onlineUsers.add(message.getContent());
+            onlineUsers.add(message.getContent()); // uid:firstName:lastName and split in js
         }
         simpMessagingTemplate.convertAndSend("/sys/user-list", onlineUsers.toArray());
         return message;
@@ -39,7 +42,7 @@ public class MessController {
     @MessageMapping("/update-users")
     public Message newConnection(@Payload Message message) throws Exception{
         System.out.println("in /update-users: "+message.toString());
-        onlineUsers.remove(message.getFrom());
+        onlineUsers.remove(message.getSender());
         simpMessagingTemplate.convertAndSend("/sys/user-list", onlineUsers.toArray());
         return message;
     }

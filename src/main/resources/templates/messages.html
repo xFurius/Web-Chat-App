@@ -24,22 +24,29 @@
                         console.log(users.body);
                         let v = JSON.parse(users.body);
                         document.getElementById('online-users').innerHTML="";
+
                         v.forEach(user => {
-                            var btn = document.createElement('button');
-                            btn.innerHTML = user;
-                            btn.id = user;
-                            btn.onclick = openMessages;
-                            
-                            document.getElementById('online-users').appendChild(btn);
+                            if(user == jsuid){
+                                //
+                            }else{
+                                var btn = document.createElement('button');
+                                btn.innerHTML = user;
+                                btn.id = user;
+                                btn.onclick = openMessages;
+                                
+                                document.getElementById('online-users').appendChild(btn);
+                            }
                         })
                     });
 
                     stompC.subscribe('/chat/'+jsuid, function(message){
-                        var m = JSON.parse(message.body);
+                        let m = JSON.parse(message.body);
+                        console.log(m)
                         showMessage(m);
                     });
 
-                    stompC.send("/app/init-users", {}, JSON.stringify({'to':"", 'content':jsuid, 'from':""}));
+                    stompC.send("/app/init-users", {}, JSON.stringify({'receiver':"", 'content':jsuid, 'sender':"", 'conversationID':''}));
+                    // stompC.send("/chat/"+jsuid, {}, JSON.stringify({'to':"", 'content':jsuid, 'from':""})); <- przekierowywanie like that
 
 
                 })
@@ -51,16 +58,34 @@
             }
 
             function send(){
-                var m = document.getElementById('mess').value;
-                console.log(window.location.pathname.split("/")[2] + ':' + m);
-                stompC.send('/app/process-message', {}, JSON.stringify({'to':window.location.pathname.split("/")[2], 'content':m, 'from':jsuid}));
+                let m = document.getElementById('mess').value;
+                let receiver = window.location.pathname.split("/")[2];
+                let conversationID = null; //
+                if(jsuid < receiver){
+                    conversationID = jsuid+'-'+receiver;
+                }else{
+                    conversationID = receiver+'-'+jsuid;
+                }
+                console.log(receiver + ':' + m);
+                let sent = {'receiver':receiver, 'content':m, 'sender':jsuid, 'conversationID':conversationID};
+                stompC.send('/app/process-message', {}, JSON.stringify(sent));
+                showMessage(sent)
             }
 
             function showMessage(message){
-                var p = document.createElement('p');
-                p.innerHTML = 'new message from: '+message.from+" : "+message.content;
-
-                document.getElementById('messagesDiv').appendChild(p);
+                if(message.sender == window.location.pathname.split("/")[2]){
+                    let p = document.createElement('p');
+                    p.innerHTML = message.sender+" : "+message.content;
+    
+                    document.getElementById('messagesDiv').appendChild(p);
+                }else{
+                    if(message.sender != jsuid){
+                        let p = document.createElement('p');
+                        p.innerHTML = 'new message from: '+message.sender;
+        
+                        document.getElementById('notificationsDiv').appendChild(p);
+                    }
+                }
             }
 
             // function showSysMessage(message){
@@ -76,7 +101,7 @@
             // }
 
             function dctest(){
-                stompC.send('/app/update-users', {}, JSON.stringify({'to':'', 'content':'dc', 'from':jsuid}))
+                stompC.send('/app/update-users', {}, JSON.stringify({'receiver':'', 'content':'dc', 'sender':jsuid, 'conversationID':''}))
                 stompC.disconnect();
                 document.getElementById('online-users').innerHTML="";
             }
@@ -111,7 +136,15 @@
         <input type="text" id="mess" placeholder="Write a message..."/>
         <button id="send" onclick="send()">Send</button>
     </div>
-    <div id="messagesDiv"></div>
+    <div id="messagesDiv">
+        <p th:each="message: ${messages}">
+            <span th:if="${message.sender != UID}" th:text="${person}"></span>
+            <span th:unless="${message.sender != UID}" th:text="${UID}"></span>
+            <span> : </span>
+            <span th:text="${message.content}"></span>
+        </p>
+    </div>
+    <div id="notificationsDiv"></div>
     <!-- <div id="usersDiv">
         <input type="text" id="receiver" placeholder="receiver"/>
     </div> -->

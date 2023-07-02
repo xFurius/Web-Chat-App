@@ -1,6 +1,7 @@
 package com.example.webChatApp.messaging;
 
-import org.hibernate.mapping.Collection;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,26 +19,30 @@ import lombok.AllArgsConstructor;
 public class MessageRest {
     private JwtTokenUtil jwtTokenUtil;
     private UserRepository userRepository;
+    private MessageRepository messageRepository;
 
-    @GetMapping(value = {"/messages", "/messages/{uid}"})
-    public String messages(@PathVariable(required = false, name = "uid") String uid, Model model, HttpServletRequest request){
-        if(uid != null){
-            User user = userRepository.findByUID(uid).get();
+    @GetMapping(value = {"/messages", "/messages/{receiver}"})
+    public String messages(@PathVariable(required = false, name = "receiver") String receiver, Model model, HttpServletRequest request){
+        String currentUser = jwtTokenUtil.extractUID(jwtTokenUtil.getToken(request));
+        String conversationID = null;
+        if(receiver != null){
+            int r = Integer.parseInt(receiver);
+            int cu = Integer.parseInt(currentUser);
+            if(r<cu){
+                conversationID = r + "-" +cu;
+            }else{
+                conversationID = cu + "-" +r;
+            }
+            User user = userRepository.findByUID(receiver).get();
             user.getLastName();
             System.out.println(user);
             model.addAttribute("person", user.getFirstName()+" "+user.getLastName());
-            model.addAttribute("data", uid);
+            List<Message> m = messageRepository.findAllByConversationID(conversationID);
+            m.stream().forEach(System.out::println);
+            model.addAttribute("messages", m);
         }
         
-        model.addAttribute("UID", jwtTokenUtil.extractUID(jwtTokenUtil.getToken(request)));
+        model.addAttribute("UID", currentUser);
         return "messages";
     }
-    
-    // @PostMapping("/test/messages")
-    // public ModelAndView messagesPOST(@RequestBody Message body){
-    //    ModelAndView model = new ModelAndView("conversation");
-    //    model.addObject("data", body.getFrom());
-    //    return model;
-    // }
-
 }
