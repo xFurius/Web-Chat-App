@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 @Controller
 public class MessageRest {
     private JwtTokenUtil jwtTokenUtil;
-    private UserRepository userRepository;
     private MessageRepository messageRepository;
+    private UserRepository userRepository;
 
     @GetMapping(value = {"/messages", "/messages/{receiver}"})
     public String messages(@PathVariable(required = false, name = "receiver") String receiver, Model model, HttpServletRequest request){
@@ -33,10 +33,10 @@ public class MessageRest {
             }else{
                 conversationID = cu + "-" +r;
             }
-            User user = userRepository.findByUID(receiver).get();
-            user.getLastName();
-            System.out.println(user);
-            model.addAttribute("person", user.getFirstName()+" "+user.getLastName());
+            User receiverUserRepo = userRepository.findByUID(receiver).get();
+            User currentUserRepo = userRepository.findByUID(currentUser).get();
+            model.addAttribute("receiver",receiverUserRepo.getFirstName()+" "+receiverUserRepo.getLastName());
+            model.addAttribute("currentUser", currentUserRepo.getFirstName()+" "+currentUserRepo.getLastName());
             List<Message> m = messageRepository.findAllByConversationID(conversationID);
             m.stream().forEach(System.out::println);
             model.addAttribute("messages", m);
