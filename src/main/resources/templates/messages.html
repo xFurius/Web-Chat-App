@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" th:href="@{/css/style.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Document</title>
 </head>
         <script type="text/javascript" th:src="@{/js/stomp.js}"></script>
@@ -68,8 +68,14 @@
             }
         </script>
 <body onload="connect()">
+    <div class="chatsDiv">
+        <p>CHATS</p>
+    </div>
     <div id="users">
         <input th:each="registeredUser: ${registeredUsers}" th:if="${UID != registeredUser.UID}" type="button" th:value="${registeredUser.firstName}" th:id="${registeredUser.UID}" class="btnUser" onclick="openMessages(this.id)">
+    </div>
+    <div class="panelDiv">
+        <form action="/logout" method="post"><button type="submit">LOGOUT</button></form>
     </div>
     <div th:if="${receiver != null}" id="sendDiv">
         <input type="text" id="mess" placeholder="Write a message..."/>
