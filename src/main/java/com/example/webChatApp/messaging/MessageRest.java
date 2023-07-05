@@ -41,7 +41,10 @@ public class MessageRest {
             m.stream().forEach(System.out::println);
             model.addAttribute("messages", m);
         }
-        
+
+        List<User> registeredUsers = userRepository.findAll(); 
+        model.addAttribute("registeredUsers", registeredUsers);
+
         model.addAttribute("UID", currentUser);
         return "messages";
     }

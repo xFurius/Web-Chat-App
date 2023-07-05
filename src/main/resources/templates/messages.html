@@ -3,59 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" th:href="@{/css/style.css}"> -->
     <title>Document</title>
 </head>
         <script type="text/javascript" th:src="@{/js/stomp.js}"></script>
         <script>
             var stompC = null;
-            var jsuid = null;
-            var onlineUsers = new Map();
+            var jsuid = [[${UID}]];
+            var currentUser = "[[${currentUser}]]";
+            var receiverUser = "[[${receiver}]]";
 
             function connect() {
-                jsuid = document.getElementById('uid').innerHTML;
-                console.log(jsuid);
-
                 var socket = new WebSocket('ws://localhost:8080/websocket');
                 stompC = Stomp.over(socket);
                 stompC.connect({}, function(frame){
-                    document.getElementById('connection').innerHTML = frame;
                     console.log('connected: '+frame);
-
-                    stompC.subscribe('/sys/user-list', function(users){
-                        console.log(users.body);
-                        document.getElementById('onlineUsers').innerHTML="";
-                        
-                        Object.entries(JSON.parse(users.body)).forEach(entry =>{
-                            const [id, user] = entry;
-                            onlineUsers.set(id, user);
-                            console.log(id+":"+user);
-                            if(jsuid != id){
-                                let btn = document.createElement('button');
-                                btn.innerHTML = user;
-                                btn.id = id;
-                                btn.onclick = openMessages;
-
-                                document.getElementById('onlineUsers').appendChild(btn);
-                            }
-                        })
-                    });
-
                     stompC.subscribe('/chat/'+jsuid, function(message){
                         let m = JSON.parse(message.body);
                         console.log(m)
                         showMessage(m);
                     });
-
-                    stompC.send("/app/init-users", {}, JSON.stringify({'receiver':"", 'content':jsuid, 'sender':"", 'conversationID':''}));
-                    // stompC.send("/chat/"+jsuid, {}, JSON.stringify({'to':"", 'content':jsuid, 'from':""})); <- przekierowywanie like that
-
-
                 })
             }
 
-            function openMessages(){
+            function openMessages(r){
                 stompC.disconnect();
-                window.location.replace("/messages/"+this.id)
+                window.location.replace("/messages/"+r)
             }
 
             function send(){
@@ -71,7 +44,9 @@
                 let sent = {'receiver':receiver, 'content':m, 'sender':jsuid, 'conversationID':conversationID};
                 stompC.send('/app/process-message', {}, JSON.stringify(sent));
                 let p = document.createElement('p');
-                p.innerHTML = onlineUsers.get(message.sender)+" : "+sent.content;
+
+                p.innerHTML = currentUser+" : "+sent.content;
+                p.className = "senderMess";
     
                 document.getElementById('messagesDiv').appendChild(p);
             }
@@ -79,86 +54,37 @@
             function showMessage(message){
                 if(message.sender == window.location.pathname.split("/")[2]){
                     let p = document.createElement('p');
-                    p.innerHTML = onlineUsers.get(message.sender)+" : "+message.content;
+
+                    p.innerHTML = receiverUser+" : "+message.content;
+                    p.className = "receiverMess";
     
                     document.getElementById('messagesDiv').appendChild(p);
                 }else{
-                    if(message.sender != jsuid){
-                        let p = document.createElement('p');
-                        p.innerHTML = 'new message from: '+onlineUsers.get(message.sender);
+                //     let p = document.createElement('p');
+                //     p.innerHTML = 'new message from: '+message.sender;
         
-                        document.getElementById('notificationsDiv').appendChild(p);
-                    }
+                //     document.getElementById('notificationsDiv').appendChild(p);
                 }
             }
-
-            // function showSysMessage(message){
-            //     var p = document.createElement('p');
-            //     p.innerHTML = message.from;
-
-            //     document.getElementById('friend-req').appendChild(p);
-            // }
-
-            // function sendMessage(to, content, dest){
-            //     stompC.send(dest, {}, JSON.stringify({'to':to, 'content':content, 'from':jsuid}));
-                
-            // }
-
-            function dctest(){
-                stompC.send('/app/update-users', {}, JSON.stringify({'receiver':'', 'content':'dc', 'sender':jsuid, 'conversationID':''}))
-                stompC.disconnect();
-                document.getElementById('onlineUsers').innerHTML="";
-            }
-
-            // function addToFriends(){
-                // sendMessage(user.value, "", "/app/process-friend-req");
-                // const data = {
-                //     to : user.value,
-                //     content : "friend request",
-                //     from : jsuid
-                // };
-                // fetch('http://localhost:8080/test/messages', {
-				// 	method: 'POST',
-				// 	headers: {
-				// 		'Content-Type': 'application/json',
-				// 	},
-				// 	body: JSON.stringify(data),
-				// })
-				// .catch((error)=>{
-				// 	console.error('Error:', error);
-				// })
-            // }
         </script>
 <body onload="connect()">
-    <p id="connection"></p>
-    <button onclick="connect()">Connect</button>
-    <button onclick="dctest()">DC TEST</button>
-    <p id="uid" th:text="${UID}"></p>
-    <div id="onlineUsers"></div>
-    <div th:if="${receiver != null}">
-        <p th:text="${receiver}"></p>
+    <div id="users">
+        <input th:each="registeredUser: ${registeredUsers}" th:if="${UID != registeredUser.UID}" type="button" th:value="${registeredUser.firstName}" th:id="${registeredUser.UID}" class="btnUser" onclick="openMessages(this.id)">
+    </div>
+    <div th:if="${receiver != null}" id="sendDiv">
         <input type="text" id="mess" placeholder="Write a message..."/>
         <button id="send" onclick="send()">Send</button>
     </div>
+    <div class="receiverDiv">
+        <p th:text="${receiver}" id="receiverUser"></p>
+    </div>
     <div id="messagesDiv">
-        <p th:each="message: ${messages}">
-            <span th:if="${message.sender != UID}" th:text="${receiver}"></span>
-            <span th:unless="${message.sender != UID}" th:text="${currentUser}"></span>
+        <p th:each="message: ${messages}" th:class="${message.sender != UID} ? 'receiverMess' : 'senderMess'">
+            <span th:text="${message.sender != UID} ? ${receiver} : ${currentUser}"></span>
             <span> : </span>
             <span th:text="${message.content}"></span>
         </p>
     </div>
     <div id="notificationsDiv"></div>
-    <!-- <div id="usersDiv">
-        <input type="text" id="receiver" placeholder="receiver"/>
-    </div> -->
-    <!-- <div id="friendsDiv"> -->
-        <!-- <input type="text" id="user" placeholder="Enter friend's uid"/> -->
-        <!-- <button onclick="addToFriends()">Send</button> -->
-    <!-- </div> -->
-    <!-- <div id="friend-req">
-        <p>Friend requests: </p>
-        <p th:text="${uid}"></p>
-    </div> -->
 </body>
 </html>

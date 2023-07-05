@@ -45,7 +45,7 @@ public class Config {
         .httpBasic(basic -> basic.disable())
         .authorizeHttpRequests(config -> config
         .requestMatchers("/register", "/home", "/auth", "/logout").permitAll()
-        .requestMatchers("/js/**").permitAll()
+        .requestMatchers("/js/**", "/css/**").permitAll()
         .requestMatchers("/chat", "/app", "/websocket", "/chat/**", "/app/**").permitAll()
         .requestMatchers("/messages","/messages/**").authenticated()
         .requestMatchers("/m/**").authenticated())
