@@ -48,7 +48,7 @@ public class Config {
         .requestMatchers("/js/**", "/css/**").permitAll()
         .requestMatchers("/chat", "/app", "/websocket", "/chat/**", "/app/**").permitAll()
         .requestMatchers("/messages","/messages/**").authenticated()
-        .requestMatchers("/m/**").authenticated())
+        .requestMatchers("/user/**").authenticated())
         .userDetailsService(userDetailsService)
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .formLogin(login -> login.loginPage("/signIn").permitAll())

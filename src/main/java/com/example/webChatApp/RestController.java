@@ -27,7 +27,7 @@ public class RestController {
 
     @GetMapping("/home")
     public String home(Model model){
-        return "test";
+        return "home";
     }
 
     @GetMapping("/register")

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/m")
+@RequestMapping("/user")
 // @RestController
 public class UserController {
     private UserRepository repository;
@@ -20,13 +20,6 @@ public class UserController {
     public String test(Model model){
         List<User> users = repository.findAll();
         model.addAttribute("users", users);
-        return "test";
-    }
-
-    @GetMapping("/insertJohn")
-    public String insertJohn(){
-        User user = new User("Jon", "snow", "test", "johnsnow@gmail.com");
-        repository.save(user);
-        return "test";
+        return "home";
     }
 }

@@ -5,15 +5,18 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import lombok.AllArgsConstructor;
+
 @Controller
+@AllArgsConstructor
 public class MessController {
     private SimpMessagingTemplate simpMessagingTemplate;
     private MessageRepository messageRepository;
 
-    public MessController(SimpMessagingTemplate simpMessagingTemplate, MessageRepository messageRepository){
-        this.simpMessagingTemplate = simpMessagingTemplate;
-        this.messageRepository = messageRepository;
-    }
+    // public MessController(SimpMessagingTemplate simpMessagingTemplate, MessageRepository messageRepository){
+    //     this.simpMessagingTemplate = simpMessagingTemplate;
+    //     this.messageRepository = messageRepository;
+    // }
 
     @MessageMapping("/process-message")
     public Message processMessage(@Payload Message message) throws Exception{
