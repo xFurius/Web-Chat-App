@@ -59,18 +59,25 @@ body{
     height: 100%;
 }
 
-.senderMess{
-    background-color: #D3C7C5;
+.senderMessP{
     margin-top: 10px;
+    text-align: right;
+}
+
+.senderMessSpan{
+    background-color: #D3C7C5;
     margin-left: auto;
     padding: 5px;
     border-radius: 10px;
     width: fit-content;
 }
 
-.receiverMess{
-    background-color: #C2B1AE;
+.receiverMessP{
     margin-top: 10px;
+}
+
+.receiverMessSpan{
+    background-color: #C2B1AE;
     margin-right: auto;
     padding: 5px;
     border-radius: 10px;

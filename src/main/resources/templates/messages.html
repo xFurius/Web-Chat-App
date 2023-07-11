@@ -45,18 +45,20 @@
                 stompC.send('/app/process-message', {}, JSON.stringify(sent));
                 let p = document.createElement('p');
 
-                p.innerHTML = currentUser+" : "+sent.content;
-                p.className = "senderMess";
+                p.innerHTML = '<span class="senderMessSpan">'+sent.content+'</span>';
+                p.className = "senderMessP";
     
                 document.getElementById('messagesDiv').appendChild(p);
+
+                document.getElementById('mess').value = "";
             }
 
             function showMessage(message){
                 if(message.sender == window.location.pathname.split("/")[2]){
                     let p = document.createElement('p');
 
-                    p.innerHTML = receiverUser+" : "+message.content;
-                    p.className = "receiverMess";
+                    p.innerHTML = '<span class="receiverMessSpan">'+message.content+'</span>';
+                    p.className = "receiverMessP";
     
                     document.getElementById('messagesDiv').appendChild(p);
                 }else{
@@ -85,10 +87,8 @@
         <p th:text="${receiver}" id="receiverUser"></p>
     </div>
     <div id="messagesDiv">
-        <p th:each="message: ${messages}" th:class="${message.sender != UID} ? 'receiverMess' : 'senderMess'">
-            <span th:text="${message.sender != UID} ? ${receiver} : ${currentUser}"></span>
-            <span> : </span>
-            <span th:text="${message.content}"></span>
+        <p th:each="message: ${messages}" th:class="${message.sender != UID} ? 'receiverMessP' : 'senderMessP'">
+            <span th:text="${message.content}" th:class="${message.sender != UID} ? 'receiverMessSpan' : 'senderMessSpan'"></span>
         </p>
     </div>
     <div id="notificationsDiv"></div>
