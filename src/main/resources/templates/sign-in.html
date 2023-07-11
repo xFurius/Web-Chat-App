@@ -3,16 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>SIGNIN</title>
 </head>
 <body>
+    <div class="formDiv">
     <div th:if="${param.error}">
         <p>INVALID CRIDENTIALS</p>
     </div>
     <form th:action="@{/auth}" method="post" th:object="${request}">
-        <input type="text" th:field="*{email}" placeholder="Email">
-        <input type="password" th:field="*{password}" placeholder="Password">
-        <input type="submit" value="SIGN IN">
+        <table>
+            <tr>
+        <td><input type="text" th:field="*{email}" placeholder="Email" class="formInput"></td>
+    </tr>
+    <tr>
+        <td><input type="password" th:field="*{password}" placeholder="Password" class="formInput"></td>
+    </tr>
+    <tr>
+        <td><input type="submit" value="SIGN IN" class="buttonSubmit"></td>
+    </tr>
+    </table>
     </form>
+    </div>
 </body>
 </html>
