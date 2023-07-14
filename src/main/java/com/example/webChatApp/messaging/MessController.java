@@ -12,12 +12,7 @@ import lombok.AllArgsConstructor;
 public class MessController {
     private SimpMessagingTemplate simpMessagingTemplate;
     private MessageRepository messageRepository;
-
-    // public MessController(SimpMessagingTemplate simpMessagingTemplate, MessageRepository messageRepository){
-    //     this.simpMessagingTemplate = simpMessagingTemplate;
-    //     this.messageRepository = messageRepository;
-    // }
-
+    
     @MessageMapping("/process-message")
     public Message processMessage(@Payload Message message) throws Exception{
         System.out.println("in process: "+message.toString());

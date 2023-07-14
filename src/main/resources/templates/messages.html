@@ -62,10 +62,17 @@
     
                     document.getElementById('messagesDiv').appendChild(p);
                 }else{
-                //     let p = document.createElement('p');
-                //     p.innerHTML = 'new message from: '+message.sender;
-        
-                //     document.getElementById('notificationsDiv').appendChild(p);
+                    let p = document.createElement('p');
+                    
+                    var users = document.getElementById('users').children;
+                    
+                    for(let child of users){
+                        if(child.id == message.sender){
+                            p.innerHTML = 'new message from: ' + child.value;
+                        }
+                    }
+
+                    document.getElementById('notificationsDiv').appendChild(p);
                 }
             }
         </script>
